@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registration Page</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+<style>
+    .form-container {
+        background-color: #f0f0f0;
+        border: 2px solid #ccc;
+        padding: 20px;
+        width: 300px;
+        margin: 0 auto;
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+    }
+    .form-container h2 {
+        text-align: center;
+        color: #008CBA;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+        font-size: 28px;
+    }
+    .form-container div {
+        margin-bottom: 15px;
+    }
+    .form-container label {
+        display: block;
+        margin-bottom: 5px;
+    }
+    .form-container input,
+    .form-container textarea {
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+    }
+    .form-container input[type="radio"] {
+        width: auto;
+    }
+    .form-container button {
+        width: 100%;
+        padding: 10px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .form-container button:hover {
+        background-color: #45a049;
+    }
+    .form-container input[type="submit"] {
+        background-color: #008CBA; 
+        border: none;
+        color: white;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .form-container input[type="submit"]:hover {
+        background-color: #007bb5; 
+    }
+    body {
+        background-color: #e3f2fd; 
+        margin: 0; 
+        padding: 0; 
+        height: 100vh; 
+        font-family: Arial, sans-serif;
+    }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+<script>
+    function validateForm() {
+        var fname = document.getElementById("fname").value;
+        var lname = document.getElementById("lname").value;
+        var pass = document.getElementById("pass").value;
+        var email = document.getElementById("mail").value;
+        var phone = document.getElementById("phone").value;
+        var address = document.getElementById("Address").value;
+        
+        var namePattern = /^[A-Za-z]{6,}$/;
+        var passPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*(\W|_)).{6,}$/;
+        var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        
+        if (!namePattern.test(fname)) {
+            alert("First Name must contain only alphabets and be at least 6 characters long.");
+            return false;
+        }
+        
+        if (!/^[A-Za-z]+$/.test(lname)) {
+            alert("Last Name must contain only alphabets.");
+            return false;
+        }
+        
+        if (!passPattern.test(pass)) {
+            alert("Password must be at least 6 characters long and contain a combination of uppercase and lowercase letters, at least 1 digit, and at least 1 special character.");
+            return false;
+        }
+        
+        if (!emailPattern.test(email)) {
+            alert("Please enter a valid email address.");
+            return false;
+        }
+        
+        if (phone.trim() === "") {
+            alert("Mobile Number should not be empty.");
+            return false;
+        }
+        
+        if (address.trim() === "") {
+            alert("Address should not be empty.");
+            return false;
+        }
+        
+        return true;
+    }
+    
+    document.addEventListener("DOMContentLoaded", function() {
+        const phoneInputField = document.querySelector("#phone");
+        window.intlTelInput(phoneInputField, {
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+            separateDialCode: true
+        });
+    });
+</script>
+</head>
+<body>
+<div class="form-container">
+    <h2>Registration Page</h2>
+    <form onsubmit="return validateForm()">
+        <div>
+            <label for="fname">First name:</label>
+            <input type="text" id="fname" name="fname" pattern="[A-Za-z]{6,}" title="First Name must contain only alphabets and be at least 6 characters long." required>
+        </div>
+        <div>
+            <label for="lname">Last name:</label>
+            <input type="text" id="lname" name="lname" pattern="[A-Za-z]+" title="Last Name must contain only alphabets." required>
+        </div>
+        <div>
+            <label for="pass">Password:</label>
+            <input type="password" id="pass" name="pass" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*(\W|_)).{6,}$" title="Password must be at least 6 characters long and contain a combination of uppercase and lowercase letters, at least 1 digit, and at least 1 special character." required>
+        </div>
+        <div>
+            <label for="phone">Mobile number:</label>
+            <input type="tel" id="phone" name="phone" required>
+        </div>
+        <div>
+            <label for="mail">Email id:</label>
+            <input type="email" id="mail" name="mail" required>
+        </div>
+        <div>
+            <label for="Address">Address:</label>
+            <input type="text" id="Address" name="Address" required>
+        </div>
+        <div>
+            <input type="submit" value="Submit">
+        </div>
+    </form>
+</div>
+</body>
+</html>
