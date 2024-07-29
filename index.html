@@ -10,7 +10,7 @@
         background-color: #f0f0f0;
         border: 2px solid #ccc;
         padding: 20px;
-        width: 300px;
+        max-width: 300px;
         margin: 0 auto;
         border-radius: 10px;
     }
@@ -32,6 +32,20 @@
         width: 100%;
         padding: 8px;
         box-sizing: border-box;
+    }
+    .form-container .input-container {
+        position: relative;
+    }
+    .form-container .input-container input[type="password"] {
+        width: 100%;
+        padding-right: 40px; /* Reserve space for the eye icon */
+    }
+    .form-container .password-toggle {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
     }
     .form-container input[type="radio"] {
         width: auto;
@@ -76,7 +90,7 @@
     }
     .iti__flag-container {
         height: 100%;
-        margin-top: 6px; /* Adjust this value to move the flag container lower */
+        margin-top: 6px;
     }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
@@ -92,23 +106,37 @@
         const emailField = document.getElementById("mail");
         
         fnameField.addEventListener("input", function() {
-            validateName(fnameField);
+            formatName(fnameField);
         });
 
         lnameField.addEventListener("input", function() {
-            validateName(lnameField);
+            formatName(lnameField);
         });
 
         emailField.addEventListener("input", function() {
             validateEmail(emailField);
         });
+
+        document.querySelector('.password-toggle').addEventListener('click', function() {
+            const passwordInput = document.getElementById('pass');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+            } else {
+                passwordInput.type = 'password';
+            }
+        });
     });
+
+    function formatName(field) {
+        field.value = field.value.charAt(0).toUpperCase() + field.value.slice(1).toLowerCase();
+        validateName(field);
+    }
 
     function validateName(field) {
         const errorMessage = field.nextElementSibling;
-        if (!field.value.match(/^[A-Z]/)) {
+        if (!field.value.match(/^[A-Za-z]+$/)) {
             errorMessage.style.display = "block";
-            errorMessage.textContent = "Name must start with a capital letter.";
+            errorMessage.textContent = "Name must contain only alphabets.";
         } else {
             errorMessage.style.display = "none";
         }
@@ -116,9 +144,10 @@
 
     function validateEmail(field) {
         const errorMessage = field.nextElementSibling;
-        if (field.value.match(/^[A-Z0-9!#$%^&*(),.?":{}|<>]/)) {
+        const value = field.value;
+        if (value.match(/^[A-Z0-9!#$%^&*(),.?":{}|<>]/) || /@\d/.test(value)) {
             errorMessage.style.display = "block";
-            errorMessage.textContent = "Email must not start with a number, capital letter, or special symbol.";
+            errorMessage.textContent = "Email must not start with a number, capital letter, or special symbol and cannot contain numbers after '@'.";
         } else {
             errorMessage.style.display = "none";
         }
@@ -133,7 +162,7 @@
         var address = document.getElementById("Address").value;
         
         var namePattern = /^[A-Za-z]{6,}$/;
-        var passPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*(\W|_)).{6,}$/;
+        var passPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*(\W|_))(?!.*\s).{6,}$/;
         var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         
         if (!namePattern.test(fname)) {
@@ -147,7 +176,7 @@
         }
         
         if (!passPattern.test(pass)) {
-            alert("Password must be at least 6 characters long and contain a combination of uppercase and lowercase letters, at least 1 digit, and at least 1 special character.");
+            alert("Password must be at least 6 characters long, contain a combination of uppercase and lowercase letters, at least 1 digit, at least 1 special character, and no spaces.");
             return false;
         }
         
@@ -177,16 +206,19 @@
         <div>
             <label for="fname">First name:</label>
             <input type="text" id="fname" name="fname" required>
-            <div class="error-message">Name must start with a capital letter.</div>
+            <div class="error-message">Name must contain only alphabets.</div>
         </div>
         <div>
             <label for="lname">Last name:</label>
             <input type="text" id="lname" name="lname" required>
-            <div class="error-message">Name must start with a capital letter.</div>
+            <div class="error-message">Name must contain only alphabets.</div>
         </div>
         <div>
             <label for="pass">Password:</label>
-            <input type="password" id="pass" name="pass" required>
+            <div class="input-container">
+                <input type="password" id="pass" name="pass" required placeholder="Enter a strong password">
+                <span class="password-toggle">👁️</span>
+            </div>
         </div>
         <div>
             <label for="phone">Mobile number:</label>
@@ -194,8 +226,8 @@
         </div>
         <div>
             <label for="mail">Email id:</label>
-            <input type="text" id="mail" name="mail" required>
-            <div class="error-message">Email must not start with a number, capital letter, or special symbol.</div>
+            <input type="text" id="mail" name="mail" required >
+            <div class="error-message">Email must not start with a number, capital letter, or special symbol and cannot contain numbers after '@'.</div>
         </div>
         <div>
             <label for="Address">Address:</label>
