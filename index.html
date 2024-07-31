@@ -74,19 +74,19 @@
     .form-container input[type="submit"]:hover {
         background-color: #007bb5; 
     }
-    .error-message {
+    .error-message, .password-error-message {
         color: red;
         font-size: 12px;
         display: none;
     }
     body {
-       background-image: url('pexels-catiamatos-1072179.jpg');
-    background-size: cover;
-    background-position: center;
-    margin: 0; 
-    padding: 0; 
-    height: 100vh; 
-    font-family: Arial, sans-serif;
+        background-image: url('pexels-catiamatos-1072179.jpg');
+        background-size: cover;
+        background-position: center;
+        margin: 0; 
+        padding: 0; 
+        height: 100vh; 
+        font-family: Arial, sans-serif;
     }
     .iti {
         width: 100%;
@@ -95,131 +95,108 @@
         height: 100%;
         margin-top: 6px;
     }
-    .password-error-message {
-        color: red;
-        font-size: 12px;
-        display: none;
-    }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-    const phoneInputField = document.querySelector("#phone");
-    window.intlTelInput(phoneInputField, {
-        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        const phoneInputField = document.querySelector("#phone");
+        window.intlTelInput(phoneInputField, {
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+
+        document.querySelector('.password-toggle').addEventListener('click', function() {
+            const passwordInput = document.getElementById('pass');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+            } else {
+                passwordInput.type = 'password';
+            }
+        });
     });
 
-    const fnameField = document.getElementById("fname");
-    const lnameField = document.getElementById("lname");
-    const emailField = document.getElementById("mail");
-    const passField = document.getElementById("pass");
-    
-    fnameField.addEventListener("input", function() {
-        formatName(fnameField);
-    });
-
-    lnameField.addEventListener("input", function() {
-        formatName(lnameField);
-    });
-
-    emailField.addEventListener("input", function() {
-        validateEmail(emailField);
-    });
-
-    passField.addEventListener("input", function() {
-        validatePassword(passField);
-    });
-
-    document.querySelector('.password-toggle').addEventListener('click', function() {
-        const passwordInput = document.getElementById('pass');
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-        } else {
-            passwordInput.type = 'password';
+    function formatName(field) {
+        field.value = field.value.replace(/[^a-zA-Z]/g, ''); // Remove non-alphabetic characters
+        if (field.value.length > 0) {
+            field.value = field.value.charAt(0).toUpperCase() + field.value.slice(1).toLowerCase();
         }
-    });
-});
+        validateName(field);
+    }
 
-function formatName(field) {
-    field.value = field.value.charAt(0).toUpperCase() + field.value.slice(1).toLowerCase();
-    validateName(field);
-}
+    function validateName(field) {
+        const errorMessage = field.nextElementSibling;
+        if (/[^a-zA-Z]/.test(field.value)) {
+            errorMessage.style.display = "block";
+            errorMessage.textContent = "Name must contain only alphabets.";
+        } else {
+            errorMessage.style.display = "none";
+        }
+    }
 
-function validateName(field) {
-    const errorMessage = field.nextElementSibling;
-    if (!field.value.match(/^[A-Za-z]+$/)) {
-        errorMessage.style.display = "block";
-        errorMessage.textContent = "Name must contain only alphabets.";
-    } else {
-        errorMessage.style.display = "none";
+    function validateEmail(field) {
+        const errorMessage = field.nextElementSibling;
+        const value = field.value;
+        if (value.match(/^[A-Z0-9!#$%^&*(),.?":{}|<>]/) || /@\d/.test(value)) {
+            errorMessage.style.display = "block";
+            errorMessage.textContent = "Email must not start with a number, capital letter, or special symbol and cannot contain numbers after '@'.";
+        } else {
+            errorMessage.style.display = "none";
+        }
     }
-}
 
-function validateEmail(field) {
-    const errorMessage = field.nextElementSibling;
-    const value = field.value;
-    if (value.match(/^[A-Z0-9!#$%^&*(),.?":{}|<>]/) || /@\d/.test(value)) {
-        errorMessage.style.display = "block";
-        errorMessage.textContent = "Email must not start with a number, capital letter, or special symbol and cannot contain numbers after '@'.";
-    } else {
-        errorMessage.style.display = "none";
+    function validatePassword(field) {
+        const errorMessage = document.querySelector(".password-error-message");
+        if (/\s/.test(field.value)) {
+            errorMessage.style.display = "block";
+            errorMessage.textContent = "Password cannot contain spaces.";
+        } else {
+            errorMessage.style.display = "none";
+        }
     }
-}
 
-function validatePassword(field) {
-    const errorMessage = document.querySelector(".password-error-message");
-    if (/\s/.test(field.value)) {
-        errorMessage.style.display = "block";
-        errorMessage.textContent = "Password cannot contain spaces.";
-    } else {
-        errorMessage.style.display = "none";
+    function validateForm() {
+        var fname = document.getElementById("fname").value;
+        var lname = document.getElementById("lname").value;
+        var pass = document.getElementById("pass").value;
+        var email = document.getElementById("mail").value;
+        var phone = document.getElementById("phone").value;
+        var address = document.getElementById("Address").value;
+        
+        var namePattern = /^[A-Za-z]{6,}$/;
+        var passPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*(\W|_)).{6,}$/;
+        var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        
+        if (!namePattern.test(fname)) {
+            alert("First Name must contain only alphabets and be at least 6 characters long.");
+            return false;
+        }
+        
+        if (!/^[A-Za-z]+$/.test(lname)) {
+            alert("Last Name must contain only alphabets.");
+            return false;
+        }
+        
+        if (!passPattern.test(pass) || /\s/.test(pass)) {
+            alert("Password must be at least 6 characters long, contain a combination of uppercase and lowercase letters, at least 1 digit, at least 1 special character, and no spaces.");
+            return false;
+        }
+        
+        if (!emailPattern.test(email)) {
+            alert("Please enter a valid email address.");
+            return false;
+        }
+        
+        if (phone.trim() === "") {
+            alert("Mobile Number should not be empty.");
+            return false;
+        }
+        
+        if (address.trim() === "") {
+            alert("Address should not be empty.");
+            return false;
+        }
+        
+        return true;
     }
-}
-
-function validateForm() {
-    var fname = document.getElementById("fname").value;
-    var lname = document.getElementById("lname").value;
-    var pass = document.getElementById("pass").value;
-    var email = document.getElementById("mail").value;
-    var phone = document.getElementById("phone").value;
-    var address = document.getElementById("Address").value;
-    
-    var namePattern = /^[A-Za-z]{6,}$/;
-    var passPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*(\W|_)).{6,}$/;
-    var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    
-    if (!namePattern.test(fname)) {
-        alert("First Name must contain only alphabets and be at least 6 characters long.");
-        return false;
-    }
-    
-    if (!/^[A-Za-z]+$/.test(lname)) {
-        alert("Last Name must contain only alphabets.");
-        return false;
-    }
-    
-    if (!passPattern.test(pass) || /\s/.test(pass)) {
-        alert("Password must be at least 6 characters long, contain a combination of uppercase and lowercase letters, at least 1 digit, at least 1 special character, and no spaces.");
-        return false;
-    }
-    
-    if (!emailPattern.test(email)) {
-        alert("Please enter a valid email address.");
-        return false;
-    }
-    
-    if (phone.trim() === "") {
-        alert("Mobile Number should not be empty.");
-        return false;
-    }
-    
-    if (address.trim() === "") {
-        alert("Address should not be empty.");
-        return false;
-    }
-    
-    return true;
-}
 </script>
 </head>
 <body>
@@ -228,18 +205,18 @@ function validateForm() {
     <form onsubmit="return validateForm()">
         <div>
             <label for="fname">First name:</label>
-            <input type="text" id="fname" name="fname" required>
+            <input type="text" id="fname" name="fname" required oninput="formatName(this)">
             <div class="error-message">Name must contain only alphabets.</div>
         </div>
         <div>
             <label for="lname">Last name:</label>
-            <input type="text" id="lname" name="lname" required>
+            <input type="text" id="lname" name="lname" required oninput="formatName(this)">
             <div class="error-message">Name must contain only alphabets.</div>
         </div>
         <div>
             <label for="pass">Password:</label>
             <div class="input-container">
-                <input type="password" id="pass" name="pass" required placeholder="Enter a strong password">
+                <input type="password" id="pass" name="pass" required placeholder="Enter a strong password" oninput="validatePassword(this)">
                 <span class="password-toggle">👁️</span>
             </div>
             <div class="password-error-message">Password cannot contain spaces.</div>
@@ -250,7 +227,7 @@ function validateForm() {
         </div>
         <div>
             <label for="mail">Email id:</label>
-            <input type="text" id="mail" name="mail" required>
+            <input type="text" id="mail" name="mail" required oninput="validateEmail(this)">
             <div class="error-message">Email must not start with a number, capital letter, or special symbol and cannot contain numbers after '@'.</div>
         </div>
         <div>
