@@ -95,6 +95,11 @@
         height: 100%;
         margin-top: 6px;
     }
+    .welcome-message {
+        text-align: center;
+        font-size: 18px;
+        color: #4CAF50;
+    }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
 <script>
@@ -145,9 +150,13 @@
 
     function validatePassword(field) {
         const errorMessage = document.querySelector(".password-error-message");
+        const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%?&])[A-Za-z\d@$!%?&]{6,}$/;
         if (/\s/.test(field.value)) {
             errorMessage.style.display = "block";
             errorMessage.textContent = "Password cannot contain spaces.";
+        } else if (!passwordPattern.test(field.value)) {
+            errorMessage.style.display = "block";
+            errorMessage.textContent = "Password should be at least 6 characters long and include lowercase, uppercase, special character, and a number.";
         } else {
             errorMessage.style.display = "none";
         }
@@ -162,7 +171,7 @@
         var address = document.getElementById("Address").value;
         
         var namePattern = /^[A-Za-z]{6,}$/;
-        var passPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*(\W|_)).{6,}$/;
+        var passPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%?&])[A-Za-z\d@$!%?&]{6,}$/;
         var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         
         if (!namePattern.test(fname)) {
@@ -176,7 +185,7 @@
         }
         
         if (!passPattern.test(pass) || /\s/.test(pass)) {
-            alert("Password must be at least 6 characters long, contain a combination of uppercase and lowercase letters, at least 1 digit, at least 1 special character, and no spaces.");
+            alert("Password must be at least 6 characters long and include lowercase, uppercase, special character, and a number, and no spaces.");
             return false;
         }
         
@@ -195,7 +204,13 @@
             return false;
         }
         
-        return true;
+        showWelcomeMessage(fname);
+        return false; // Prevents actual form submission for demo purposes
+    }
+
+    function showWelcomeMessage(name) {
+        const formContainer = document.querySelector('.form-container');
+        formContainer.innerHTML = `<div class="welcome-message">Welcome, ${name}! You have successfully registered.</div>`;
     }
 </script>
 </head>
@@ -216,19 +231,19 @@
         <div>
             <label for="pass">Password:</label>
             <div class="input-container">
-                <input type="password" id="pass" name="pass" required placeholder="Enter a strong password" oninput="validatePassword(this)">
-                <span class="password-toggle">👁️</span>
+                <input type="password" id="pass" name="pass" required oninput="validatePassword(this)">
+                <i class="fas fa-eye password-toggle"></i>
             </div>
-            <div class="password-error-message">Password cannot contain spaces.</div>
+            <div class="password-error-message"></div>
         </div>
         <div>
-            <label for="phone">Mobile number:</label>
-            <input type="tel" id="phone" name="phone" required>
-        </div>
-        <div>
-            <label for="mail">Email id:</label>
+            <label for="mail">Email:</label>
             <input type="text" id="mail" name="mail" required oninput="validateEmail(this)">
             <div class="error-message">Email must not start with a number, capital letter, or special symbol and cannot contain numbers after '@'.</div>
+        </div>
+        <div>
+            <label for="phone">Mobile Number:</label>
+            <input type="tel" id="phone" name="phone" required>
         </div>
         <div>
             <label for="Address">Address:</label>
